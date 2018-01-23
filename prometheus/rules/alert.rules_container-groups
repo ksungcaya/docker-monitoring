@@ -1,0 +1,9 @@
+groups:
+  - name: container-groups
+    rules:
+      - alert: monitoring_container_group_missing_members
+        expr: count(rate(container_last_seen{name=~".+",container_label_container_group=~"monitoring"}[5m])) by (container_label_container_group,host) < 10
+        for: 5m
+        annotations:
+          summary: "CONTAINER GROUP WARNING: CONTAINER GROUP '{{ $labels.container_label_container_group }}' on '{{ $labels.host }}'"
+          description: "{{ $labels.container_label_container_group }} is missing containers. Container count is {{ $value }}/13."

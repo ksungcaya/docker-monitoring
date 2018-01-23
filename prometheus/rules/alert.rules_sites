@@ -1,0 +1,12 @@
+groups:
+  - name: sites
+    rules:
+      - alert: service_endpoint_down
+        expr: probe_success{job='service'} == 0
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ENGOPS SERVICE NON-OPERATIONAL"
+          description: "Service {{ $labels.service_name }} with endpoint {{ $labels.service_url }} is not reachable. Please check whether the instance is running"
+

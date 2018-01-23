@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  grafana:
+    image: 'grafana/grafana'
+    environment:
+      GF_SERVER_ROOT_URL: 'http://192.168.100.10'
+      GF_SECURITY_ADMIN_USER: 'admin'
+      GF_SECURITY_ADMIN_PASSWORD: 'admin'
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - '3000:3000'
+    networks:
+      default: ~
+      static:
+        ipv4_address: '192.168.100.10'
+
+networks:
+  default:
+    driver: bridge
+  static:
+      driver: bridge
+      ipam:
+          driver: default
+          config:
+              - subnet: '192.168.100.0/24'
+
+volumes:
+  grafana_data: {}

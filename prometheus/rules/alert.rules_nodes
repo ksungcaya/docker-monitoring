@@ -1,0 +1,56 @@
+groups:
+  - name: nodes
+    rules:
+      - alert: monitoring_service_down
+        expr: up == 0
+        for: 5m
+        annotations:
+          summary: "MONITORING SERVICE DOWN WARNING: NODE '{{ $labels.host }}'"
+          description: "The monitoring service '{{ $labels.job }}' is down."
+
+      - alert: high_load_on_node
+        expr: node_load1 > 1.5
+        for: 2m
+        annotations:
+          summary: "HIGH LOAD WARINING: NODE '{{ $labels.host }}'"
+          description: "{{ $labels.host }} is under high load. The average load 1m is at {{ humanize $value }}. Reported by instance {{ $labels.instance }}."
+
+      - alert: node_running_out_of_memory
+        expr: (sum(node_memory_MemTotal) - sum(node_memory_MemFree + node_memory_Buffers + node_memory_Cached) ) / sum(node_memory_MemTotal) * 100 > 85
+        for: 5m
+        annotations:
+          summary: "LOW MEMORY WARNING: NODE '{{ $labels.host }}'"
+          description: "{{ $labels.host }} memory usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
+
+      - alert: node_running_out_of_disk_space
+        expr: (node_filesystem_size{fstype="aufs"} - node_filesystem_free{fstype="aufs"}) / node_filesystem_size{fstype="aufs"} * 100 > 85
+        for: 5m
+        annotations:
+          summary: "LOW DISK SPACE WARING: NODE '{{ $labels.host }}'"
+          description: "{{ $labels.host }} storage usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
+
+      - alert: node_low_disk_space
+        expr: 100 * min(node_filesystem_avail/node_filesystem_size{mountpoint=~"/etc/hostname|^/mnt.*|^/data.*"}) by (device, fstype, host, instance, job) < 10.0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "LOW DISK SPACE WARING: NODE '{{ $labels.host }}'"
+          description: "Warning, node '{{ $labels.host }}' has less than 10% of free disk space on device {{ $labels.device }} with mount point {{ $labels.mountpoint }}. Available disk space at {{ humanize $value }}%"
+
+      - alert: node_restarted
+        expr: node_time - node_boot_time < 300
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+            summary: "NODE RESTARTED WARNING: NODE '{{ $labels.host }}'"
+            description: "Warning: Node '{{ $labels.host }}' was restarted at {{ $value }} seconds ago."
+
+      ################################### TEST ALERT
+      - alert: TESTING_high_load_on_node
+        expr: node_load1 > 0
+        for: 1s
+        annotations:
+            summary: "+++ TESTING ++++ TESTING ++++ TESTING +++ ::: HIGH LOAD WARNING: NODE '{{ $labels.host }}'"
+            description: "{{ $labels.host}} is under high load. Load is {{ humanize $value }}."

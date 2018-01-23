@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  grafana:
+    environment:
+      GF_INSTALL_PLUGINS: 'natel-influx-admin-panel'
+
+  influxdb:
+    image: 'influxdb'
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    ports:
+      - '8086:8086'
+    networks:
+      static:
+        ipv4_address: '192.168.100.20'
+  
+  telegraf:
+    image: 'telegraf:alpine'
+    environment:
+      TELEGRAF_INFLUXDB_HOST: influxdb
+      TELEGRAF_INFLUXDB_NAME: telegraf
+    volumes:
+      - './telegraf/telegraf.conf:/etc/telegraf/telegraf.conf'
+      - '/:/rootfs:ro'
+      - '/sys:/sys:ro'
+      - '/var/run:/var/run:rw'
+      - '/var/lib/docker/:/var/lib/docker:ro'
+    networks:
+      static:
+        ipv4_address: '192.168.100.101'
+
+volumes:
+  influxdb_data: {}

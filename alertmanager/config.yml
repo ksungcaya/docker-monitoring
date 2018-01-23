@@ -1,0 +1,18 @@
+route:
+  receiver: hipchat
+
+receivers:
+  - name: hipchat
+    hipchat_configs:
+      - room_id: "HIPCHAT_ROOM_ID"
+        auth_token: "HIPCHAT_AUTH_TOKEN"
+        message_format: html
+        notify: true
+
+  # SLACK
+  # - name: "slack"
+  #   slack_configs:
+  #     - send_resolved: true
+  #       username: "SLACK_USERNAME"
+  #       channel: "SLACK_CHANNEL"
+  #       api_url: "SLACK_INCOMING_WEBHOOK_URL"
