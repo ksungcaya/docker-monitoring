@@ -36,6 +36,27 @@ scrape_configs:
       - targets: ['nodeexporter:9100']
         labels: 
           host: 'host1'
+    
+    # ECS - config sample
+    # scheme: http
+    # ec2_sd_configs:
+    #   - region: eu-west-1
+    #     access_key: <access-key>
+    #     secret_key: <secret>
+    #     refresh_interval: 1m
+    #     port: 9100
+    # relabel_configs:
+    #   - source_labels: [__meta_ec2_tag_Role]
+    #     separator: ;
+    #     regex: wp-container-instance
+    #     replacement: $1
+    #     action: keep
+    #   - source_labels: [__meta_ec2_instance_id]
+    #     separator: ;
+    #     regex: (.*)
+    #     target_label: instance
+    #     replacement: $1
+    #     action: replace
 
   - job_name: 'containers'
     scrape_interval: 10s
@@ -44,8 +65,23 @@ scrape_configs:
       - targets: ['cadvisor:8080']
         labels: 
           host: 'host1'
+    
+    # ECS - sample config
+    # scheme: http
+    # ec2_sd_configs:
+    #   - region: eu-west-1
+    #     access_key: <access-key>
+    #     secret_key: <secret>
+    #     refresh_interval: 1m
+    #     port: 8080
+    # relabel_configs:
+    #   - source_labels: [__meta_ec2_tag_Role]
+    #     separator: ;
+    #     regex: wp-container-instance
+    #     replacement: $1
+    #     action: keep
 
-  #Will/23.08.16: dcom restart prometheus suffices to load config/rule changes
+  # Will/23.08.16: dcom restart prometheus suffices to load config/rule changes
 
   - job_name: 'prometheus-server'
     scrape_interval: 10s
